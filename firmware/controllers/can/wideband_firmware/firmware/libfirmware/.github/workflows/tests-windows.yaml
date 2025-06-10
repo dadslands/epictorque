@@ -1,0 +1,25 @@
+name: Unit Tests on Windows
+
+on: [push,pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+
+      - name: Print GCC version
+        working-directory: .
+        run: gcc -v
+
+      - name: Print make version
+        working-directory: .
+        run: make -v
+
+# huh? how come this does not work? :(
+#      - name: Compile
+#        working-directory: .
+#        run: make
+#
