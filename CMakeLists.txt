@@ -1,0 +1,1171 @@
+cmake_minimum_required(VERSION 3.30)
+project(rusefi)
+
+FILE(GLOB MyCSources firmware/controllers/generated/*.h)
+FILE(GLOB MyCSources2 firmware/controllers/modules/*/*.h)
+
+set(CMAKE_CXX_STANDARD 17)
+
+
+add_definitions(-DHAL_USE_ADC)
+add_definitions(-DEFI_TUNER_STUDIO=1)
+add_definitions(-DEFI_PROD_CODE=1)
+add_definitions(-DPROTOCOL_MSG="msg")
+add_definitions(-DLOG_DELIMITER="`")
+add_definitions(-DEFI_MCP_3208=1)
+add_definitions(-DEFI_MAX_31855=1)
+add_definitions(-DEFI_MAP_AVERAGING)
+add_definitions(-DEFI_MAF_AVERAGING)
+add_definitions(-DMODULE_MAP_AVERAGING)
+add_definitions(-DMODULE_MAF_AVERAGING)
+add_definitions(-DEFI_VEHICLE_SPEED)
+add_definitions(-DMODULE_ODOMETER)
+
+include_directories(firmware/integration)
+include_directories(firmware)
+include_directories(firmware/config/boards)
+include_directories(firmware/config/boards/f407-discovery)
+include_directories(firmware/config/boards/hellen)
+include_directories(firmware/config/engines)
+include_directories(firmware/config/engines/mazda)
+include_directories(firmware/config/stm32f4ems)
+include_directories(firmware/config/stm32f7ems)
+include_directories(firmware/config/stm32h7ems)
+include_directories(firmware/console)
+include_directories(firmware/live_data_generated)
+include_directories(firmware/controllers/modules/)
+include_directories(firmware/controllers/modules/maf_averaging)
+include_directories(firmware/controllers/modules/map_averaging)
+include_directories(firmware/controllers/modules/fuel_pump)
+include_directories(firmware/controllers/modules/ethernet_console)
+include_directories(firmware/controllers/modules/tachometer)
+include_directories(firmware/controllers/modules/trip_odometer)
+include_directories(firmware/controllers/modules/generated)
+include_directories(firmware/controllers/modules/fan_control)
+include_directories(firmware/controllers/modules/gear_detector)
+include_directories(firmware/console/binary)
+include_directories(firmware/console/binary_log)
+include_directories(firmware/controllers)
+include_directories(firmware/controllers/generated/)
+include_directories(firmware/controllers/actuators)
+include_directories(firmware/controllers/actuators/gppwm)
+include_directories(firmware/controllers/algo)
+include_directories(firmware/controllers/algo/airmass)
+include_directories(firmware/controllers/algo/defaults)
+include_directories(firmware/controllers/algo/fuel)
+include_directories(firmware/controllers/algo/ignition)
+include_directories(firmware/controllers/can)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/lib)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/io)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/io)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/openblt)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/io)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/openblt)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/io)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/openblt)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/console/binary)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/shared)
+include_directories(firmware/controllers/can/wideband_firmware/firmware/util)
+include_directories(firmware/controllers/can/wideband_firmware/for_rusefi)
+include_directories(firmware/controllers/can/wideband_firmware/test)
+include_directories(firmware/controllers/core)
+include_directories(firmware/controllers/engine_cycle)
+include_directories(firmware/controllers/gauges)
+include_directories(firmware/controllers/lua)
+include_directories(firmware/controllers/lua/luaaa)
+include_directories(firmware/controllers/math)
+include_directories(firmware/controllers/sensors)
+include_directories(firmware/controllers/sensors/converters)
+include_directories(firmware/controllers/sensors/core)
+include_directories(firmware/controllers/sensors/impl)
+include_directories(firmware/controllers/sensors/impl/fft)
+include_directories(firmware/controllers/system)
+include_directories(firmware/controllers/system/timer)
+include_directories(firmware/controllers/tcu)
+include_directories(firmware/controllers/trigger)
+include_directories(firmware/controllers/trigger/decoders)
+include_directories(firmware/development)
+include_directories(firmware/development/hw_layer)
+include_directories(firmware/development/test)
+include_directories(firmware/ext_algo)
+include_directories(firmware/hw_layer)
+include_directories(firmware/hw_layer/adc)
+include_directories(firmware/hw_layer/algo)
+include_directories(firmware/hw_layer/atwinc1500)
+include_directories(firmware/hw_layer/digital_input)
+include_directories(firmware/hw_layer/digital_input/trigger)
+include_directories(firmware/hw_layer/drivers)
+include_directories(firmware/hw_layer/drivers/can)
+include_directories(firmware/hw_layer/drivers/flash/sst26f)
+include_directories(firmware/hw_layer/drivers/flash/w25q)
+include_directories(firmware/hw_layer/drivers/gpio)
+include_directories(firmware/hw_layer/drivers/i2c)
+include_directories(firmware/hw_layer/drivers/led)
+include_directories(firmware/hw_layer/drivers/sent)
+include_directories(firmware/hw_layer/mass_storage)
+include_directories(firmware/hw_layer/microsecond_timer)
+include_directories(firmware/hw_layer/ports)
+include_directories(firmware/hw_layer/ports/stm32)
+include_directories(firmware/hw_layer/ports/stm32/cfg)
+include_directories(firmware/hw_layer/ports/stm32/serial_over_usb)
+include_directories(firmware/hw_layer/ports/stm32/stm32f4)
+include_directories(firmware/hw_layer/ports/stm32/stm32f4/cfg)
+include_directories(firmware/hw_layer/ports/stm32/stm32f4/openblt/lib)
+include_directories(firmware/hw_layer/ports/stm32/stm32f7)
+include_directories(firmware/hw_layer/ports/stm32/stm32f7/cfg)
+include_directories(firmware/hw_layer/ports/stm32/stm32f7/openblt/lib)
+include_directories(firmware/hw_layer/ports/stm32/stm32h7)
+include_directories(firmware/hw_layer/ports/stm32/stm32h7/cfg)
+include_directories(firmware/hw_layer/sensors)
+include_directories(firmware/init)
+include_directories(firmware/libfirmware/board_id)
+include_directories(firmware/libfirmware/can)
+include_directories(firmware/libfirmware/mock)
+include_directories(firmware/libfirmware/pt2001)
+include_directories(firmware/libfirmware/pt2001/include)
+include_directories(firmware/libfirmware/pt2001/include/rusefi)
+include_directories(firmware/libfirmware/pt2001/project/rusefi/sample_code)
+include_directories(firmware/libfirmware/pt2001/src)
+include_directories(firmware/libfirmware/sent/include)
+include_directories(firmware/libfirmware/sent/src)
+include_directories(firmware/libfirmware/stm32-util)
+include_directories(firmware/libfirmware/util/include)
+include_directories(firmware/libfirmware/util/include/rusefi)
+include_directories(firmware/libfirmware/util/include/rusefi/containers)
+include_directories(firmware/pch)
+include_directories(firmware/util)
+include_directories(firmware/util/containers)
+include_directories(firmware/util/math)
+include_directories(unit_tests)
+include_directories(unit_tests/chibios-mock)
+include_directories(unit_tests/googletest/googlemock/include)
+include_directories(unit_tests/googletest/googlemock/include/gmock)
+include_directories(unit_tests/googletest/googlemock/include/gmock/internal)
+include_directories(unit_tests/googletest/googlemock/include/gmock/internal/custom)
+include_directories(unit_tests/googletest/googlemock/test)
+include_directories(unit_tests/googletest/googletest/include)
+include_directories(unit_tests/googletest/googletest/include/gtest)
+include_directories(unit_tests/googletest/googletest/include/gtest/internal)
+include_directories(unit_tests/googletest/googletest/include/gtest/internal/custom)
+include_directories(unit_tests/googletest/googletest/samples)
+include_directories(unit_tests/googletest/googletest/src)
+include_directories(unit_tests/googletest/googletest/test)
+include_directories(unit_tests/test-framework)
+include_directories(unit_tests/tests/ac)
+include_directories(unit_tests/tests/actuators/boost)
+include_directories(unit_tests/tests/launch)
+include_directories(unit_tests/tests/lua)
+include_directories(unit_tests/tests/nitrous_control)
+include_directories(unit_tests/tests/sensor/mock)
+include_directories(unit_tests/tests/shift_torque_reduction)
+include_directories(unit_tests/tests/util)
+
+
+add_executable(rusefi
+        firmware/config/boards/f407-discovery/board_configuration.cpp
+    firmware/config/boards/f407-discovery/knock_config.h
+      firmware/config/boards/board_id.cpp
+    firmware/config/boards/board_id.h
+        firmware/hw_layer/adc/adc_inputs.h
+    firmware/config/boards/hellen_meta.h
+    firmware/config/boards/hellen_mm100_meta.h
+    firmware/config/boards/hellen_mm176_meta.h
+    firmware/config/boards/hellen_mm64_meta.h
+    firmware/config/boards/mre_meta.h
+    firmware/config/boards/proteus_meta.h
+    firmware/config/engines/mazda/mazda_miata.cpp
+    firmware/config/engines/mazda/mazda_miata.h
+    firmware/config/engines/mazda/mazda_miata_1_6.cpp
+    firmware/config/engines/mazda/mazda_miata_1_6.h
+    firmware/config/engines/mazda/mazda_miata_base_maps.cpp
+    firmware/config/engines/mazda/mazda_miata_base_maps.h
+    firmware/config/engines/mazda/mazda_miata_na8.cpp
+    firmware/config/engines/mazda/mazda_miata_na8.h
+    firmware/config/engines/mazda/mazda_miata_vvt.cpp
+    firmware/config/engines/mazda/mazda_miata_vvt.h
+    firmware/config/engines/bmw_m52.cpp
+    firmware/config/engines/bmw_m52.h
+    firmware/config/engines/bmw_m73.cpp
+    firmware/config/engines/bmw_m73.h
+    firmware/config/engines/bmw_m73_mre.cpp
+    firmware/config/engines/canam.cpp
+    firmware/config/engines/canam.h
+    firmware/config/engines/canam_canned.cpp
+    firmware/config/engines/custom_engine.cpp
+    firmware/config/engines/custom_engine.h
+    firmware/config/engines/dodge_neon.cpp
+    firmware/config/engines/dodge_neon.h
+    firmware/config/engines/dodge_ram.cpp
+    firmware/config/engines/dodge_ram.h
+    firmware/config/engines/engine_template.cpp
+    firmware/config/engines/engine_template.h
+    firmware/config/engines/ford_1995_inline_6.cpp
+    firmware/config/engines/ford_1995_inline_6.h
+    firmware/config/engines/ford_aspire.cpp
+    firmware/config/engines/ford_aspire.h
+    firmware/config/engines/ford_festiva.cpp
+    firmware/config/engines/ford_festiva.h
+    firmware/config/engines/gm_ls_4.cpp
+    firmware/config/engines/gm_ls_4.h
+    firmware/config/engines/gm_sbc.cpp
+    firmware/config/engines/gm_sbc.h
+    firmware/config/engines/GY6_139QMB.cpp
+    firmware/config/engines/GY6_139QMB.h
+    firmware/config/engines/harley.cpp
+    firmware/config/engines/harley.h
+    firmware/config/engines/harley_canned.cpp
+    firmware/config/engines/honda.cpp
+    firmware/config/engines/honda.h
+    firmware/config/engines/honda_600.cpp
+    firmware/config/engines/honda_600.h
+    firmware/config/engines/honda_k_dbc.cpp
+    firmware/config/engines/honda_k_dbc.h
+    firmware/config/engines/honda_obd1.cpp
+    firmware/config/engines/honda_obd1.h
+    firmware/config/engines/honda_obd1_canned_tables.cpp
+    firmware/config/engines/hyundai.cpp
+    firmware/config/engines/hyundai.h
+    firmware/config/engines/hyundai_coupe_canned_tables.cpp
+    firmware/config/engines/hyundai_pb_canned.cpp
+    firmware/config/engines/hyundai_pb_canned_tables.cpp
+    firmware/config/engines/m111.cpp
+    firmware/config/engines/m111.h
+    firmware/config/engines/mercedes.cpp
+    firmware/config/engines/mercedes.h
+    firmware/config/engines/mitsubishi_3A92.cpp
+    firmware/config/engines/mitsubishi_3A92.h
+    firmware/config/engines/mitsubishi_4G93.cpp
+    firmware/config/engines/mitsubishi_4G93.h
+    firmware/config/engines/nissan_primera.cpp
+    firmware/config/engines/nissan_primera.h
+    firmware/config/engines/nissan_vq.cpp
+    firmware/config/engines/nissan_vq.h
+    firmware/config/engines/sachs.cpp
+    firmware/config/engines/sachs.h
+    firmware/config/engines/slingshot.cpp
+    firmware/config/engines/slingshot.h
+    firmware/config/engines/subaru.cpp
+    firmware/config/engines/subaru.h
+    firmware/config/engines/test_engine.cpp
+    firmware/config/engines/test_engine.h
+    firmware/config/engines/toyota_1NZ_FE.cpp
+    firmware/config/engines/toyota_1NZ_FE.h
+    firmware/config/engines/toyota_jz.cpp
+    firmware/config/engines/toyota_jz.h
+    firmware/config/engines/vw.cpp
+    firmware/config/engines/vw.h
+    firmware/config/engines/vw_b6.cpp
+    firmware/config/engines/vw_b6.h
+    firmware/config/stm32f4ems/efifeatures.h
+    firmware/config/stm32f7ems/efifeatures.h
+    firmware/config/stm32h7ems/efifeatures.h
+    firmware/console/binary/bluetooth.cpp
+    firmware/console/binary/bluetooth.h
+    firmware/console/binary/live_data.cpp
+    firmware/console/binary/live_data.h
+    firmware/console/binary/livedata_board_extra.h
+    firmware/console/binary/serial_can.cpp
+    firmware/console/binary/serial_can.h
+    firmware/console/binary/signature.cpp
+    firmware/console/binary/signature.h
+    firmware/console/binary/tooth_logger.cpp
+    firmware/console/binary/tooth_logger.h
+    firmware/console/binary/trigger_scope.cpp
+    firmware/console/binary/trigger_scope.h
+    firmware/console/binary/ts_can_channel.cpp
+    firmware/console/binary/tunerstudio.cpp
+    firmware/console/binary/tunerstudio.h
+    firmware/console/binary/tunerstudio_commands.cpp
+    firmware/console/binary/tunerstudio_impl.h
+    firmware/console/binary/tunerstudio_io.cpp
+    firmware/console/binary/tunerstudio_io.h
+    firmware/console/binary/tunerstudio_io_serial.cpp
+    firmware/console/binary/tunerstudio_io_serial_ports.cpp
+    firmware/console/binary/tunerstudio_outputs.h
+    firmware/console/binary_log/binary_logging.cpp
+    firmware/console/binary_log/binary_logging.h
+    firmware/console/binary_log/board_lookup.h
+    firmware/console/binary_log/log_field.cpp
+    firmware/console/binary_log/log_field.h
+    firmware/console/connector_uart_dma.cpp
+    firmware/console/connector_uart_dma.h
+    firmware/console/console_io.cpp
+    firmware/console/console_io.h
+    firmware/console/eficonsole.cpp
+    firmware/console/eficonsole.h
+    firmware/console/lwipopts.h
+    firmware/console/status_loop.cpp
+    firmware/console/status_loop.h
+    firmware/console/usb_console.cpp
+    firmware/console/wifi_console.cpp
+    firmware/console/wifi_firmware_updater.cpp
+    firmware/controllers/actuators/gppwm/gppwm.cpp
+    firmware/controllers/actuators/gppwm/gppwm.h
+    firmware/controllers/actuators/gppwm/gppwm_channel.cpp
+    firmware/controllers/actuators/gppwm/gppwm_channel.h
+    firmware/controllers/actuators/ac_control.cpp
+    firmware/controllers/actuators/ac_control.h
+    firmware/controllers/actuators/alternator_controller.cpp
+    firmware/controllers/actuators/alternator_controller.h
+    firmware/controllers/actuators/boost_control.cpp
+    firmware/controllers/actuators/boost_control.h
+    firmware/controllers/actuators/dc_motors.cpp
+    firmware/controllers/actuators/dc_motors.h
+    firmware/controllers/actuators/electronic_throttle.cpp
+    firmware/controllers/actuators/electronic_throttle.h
+    firmware/controllers/actuators/electronic_throttle_impl.h
+    firmware/controllers/actuators/gppwm_channel_reader.cpp
+    firmware/controllers/actuators/gppwm_channel_reader.h
+    firmware/controllers/actuators/harley_acr.cpp
+    firmware/controllers/actuators/harley_acr.h
+    firmware/controllers/actuators/idle_hardware.cpp
+    firmware/controllers/actuators/idle_hardware.h
+    firmware/controllers/actuators/idle_thread.cpp
+    firmware/controllers/actuators/idle_thread.h
+    firmware/controllers/actuators/idle_thread_io.cpp
+    firmware/controllers/actuators/main_relay.cpp
+    firmware/controllers/actuators/main_relay.h
+    firmware/controllers/actuators/vvt.cpp
+    firmware/controllers/actuators/vvt.h
+    firmware/controllers/algo/airmass/airmass.cpp
+    firmware/controllers/algo/airmass/airmass.h
+    firmware/controllers/algo/airmass/alphan_airmass.cpp
+    firmware/controllers/algo/airmass/alphan_airmass.h
+    firmware/controllers/algo/airmass/lua_airmass.h
+    firmware/controllers/algo/airmass/maf_airmass.cpp
+    firmware/controllers/algo/airmass/maf_airmass.h
+    firmware/controllers/algo/airmass/speed_density_airmass.cpp
+    firmware/controllers/algo/airmass/speed_density_airmass.h
+    firmware/controllers/algo/airmass/speed_density_base.cpp
+    firmware/controllers/algo/airmass/speed_density_base.h
+    firmware/controllers/algo/defaults/default_base_engine.cpp
+    firmware/controllers/algo/defaults/default_cranking.cpp
+    firmware/controllers/algo/defaults/default_fuel.cpp
+    firmware/controllers/algo/defaults/default_ignition.cpp
+    firmware/controllers/algo/defaults/defaults.h
+    firmware/controllers/algo/fuel/batt_lag_corr_curve.h
+    firmware/controllers/algo/fuel/dfco.cpp
+    firmware/controllers/algo/fuel/dfco.h
+    firmware/controllers/algo/fuel/fuel_computer.cpp
+    firmware/controllers/algo/fuel/fuel_computer.h
+    firmware/controllers/algo/fuel/injector_model.cpp
+    firmware/controllers/algo/fuel/injector_model.h
+    firmware/controllers/algo/ignition/ignition_state.cpp
+    firmware/controllers/algo/ignition/ignition_state.h
+    firmware/controllers/algo/accel_enrichment.cpp
+    firmware/controllers/algo/accel_enrichment.h
+    firmware/controllers/algo/advance_map.h
+    firmware/controllers/algo/antilag_system.cpp
+    firmware/controllers/algo/antilag_system.h
+    firmware/controllers/algo/board_types.h
+    firmware/controllers/algo/dynoview.cpp
+    firmware/controllers/algo/dynoview.h
+    firmware/controllers/algo/engine.cpp
+    firmware/controllers/algo/engine.h
+    firmware/controllers/algo/engine2.cpp
+    firmware/controllers/algo/engine_configuration.cpp
+    firmware/controllers/algo/engine_configuration.h
+    firmware/controllers/algo/engine_configuration_defaults.h
+    firmware/controllers/algo/engine_parts.h
+    firmware/controllers/algo/engine_state.h
+    firmware/controllers/algo/engine_type_e.h
+    firmware/controllers/algo/engine_type_impl.cpp
+    firmware/controllers/algo/engine_types.h
+    firmware/controllers/algo/event_registry.cpp
+    firmware/controllers/algo/event_registry.h
+    firmware/controllers/algo/firing_order.h
+    firmware/controllers/algo/fuel_math.cpp
+    firmware/controllers/algo/fuel_math.h
+    firmware/controllers/algo/launch_control.cpp
+    firmware/controllers/algo/launch_control.h
+    firmware/controllers/algo/nitrous_controller.cpp
+    firmware/controllers/algo/nitrous_controller.h
+    firmware/controllers/algo/nmea.cpp
+    firmware/controllers/algo/nmea.h
+    firmware/controllers/algo/obd_error_codes.h
+    firmware/controllers/algo/odometer.h
+    firmware/controllers/algo/persistent_configuration.h
+    firmware/controllers/algo/runtime_state.cpp
+    firmware/controllers/algo/runtime_state.h
+    firmware/controllers/algo/rusefi_enums.h
+    firmware/controllers/algo/rusefi_hw_adc_enums.h
+    firmware/controllers/algo/rusefi_hw_enums.h
+    firmware/controllers/algo/rusefi_hw_pin_mode.h
+    firmware/controllers/algo/rusefi_hw_stm32_enums.h
+    firmware/controllers/algo/rusefi_types.h
+    firmware/controllers/algo/shift_torque_reduction_controller.cpp
+    firmware/controllers/algo/shift_torque_reduction_controller.h
+    firmware/controllers/algo/wall_fuel.cpp
+    firmware/controllers/algo/wall_fuel.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/cfg/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/cfg/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/cfg/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/cfg/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/cfg/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/bootloader/bootloader.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/io/io_pins.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/port_shared.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f0_module/wideband_board_config.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/lib/stm32f1xx_hal_conf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/lib/system_stm32f1xx.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/hooks.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/led.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/led.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/shared_params.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/openblt/shared_params.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_common/f1_port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/io/io_pins.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/port_shared.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual/wideband_board_config.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/io/io_pins.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/openblt/blt_conf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/openblt/flash_layout.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/openblt/main.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/port_shared.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_dual_rev1/wideband_board_config.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/io/io_pins.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/openblt/blt_conf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/openblt/flash_layout.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/openblt/main.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/port_shared.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev2/wideband_board_config.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/io/io_pins.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/openblt/blt_conf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/openblt/flash_layout.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/openblt/main.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/board.c
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/board.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/chconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/halconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/mcuconf.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/port.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/port_shared.cpp
+    firmware/controllers/can/wideband_firmware/firmware/boards/f1_rev3/wideband_board_config.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/port.h
+    firmware/controllers/can/wideband_firmware/firmware/boards/port_shared.h
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio.cpp
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio.h
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio_commands.cpp
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio_impl.h
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio_io.cpp
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio_io.h
+    firmware/controllers/can/wideband_firmware/firmware/console/binary/tunerstudio_io_serial.cpp
+    firmware/controllers/can/wideband_firmware/firmware/shared/flash.cpp
+    firmware/controllers/can/wideband_firmware/firmware/shared/flash.h
+    firmware/controllers/can/wideband_firmware/firmware/util/bit.h
+    firmware/controllers/can/wideband_firmware/firmware/util/byteswap.h
+    firmware/controllers/can/wideband_firmware/firmware/util/thread_controller.h
+    firmware/controllers/can/wideband_firmware/firmware/util/timer.cpp
+    firmware/controllers/can/wideband_firmware/firmware/util/timer.h
+    firmware/controllers/can/wideband_firmware/firmware/auxout.cpp
+    firmware/controllers/can/wideband_firmware/firmware/auxout.h
+    firmware/controllers/can/wideband_firmware/firmware/can.cpp
+    firmware/controllers/can/wideband_firmware/firmware/can.h
+    firmware/controllers/can/wideband_firmware/firmware/can_helper.cpp
+    firmware/controllers/can/wideband_firmware/firmware/can_helper.h
+    firmware/controllers/can/wideband_firmware/firmware/dac.cpp
+    firmware/controllers/can/wideband_firmware/firmware/dac.h
+    firmware/controllers/can/wideband_firmware/firmware/fault.cpp
+    firmware/controllers/can/wideband_firmware/firmware/fault.h
+    firmware/controllers/can/wideband_firmware/firmware/gpio.h
+    firmware/controllers/can/wideband_firmware/firmware/heater_control.cpp
+    firmware/controllers/can/wideband_firmware/firmware/heater_control.h
+    firmware/controllers/can/wideband_firmware/firmware/heater_thread.cpp
+    firmware/controllers/can/wideband_firmware/firmware/indication.cpp
+    firmware/controllers/can/wideband_firmware/firmware/indication.h
+    firmware/controllers/can/wideband_firmware/firmware/lambda_conversion.cpp
+    firmware/controllers/can/wideband_firmware/firmware/lambda_conversion.h
+    firmware/controllers/can/wideband_firmware/firmware/livedata.cpp
+    firmware/controllers/can/wideband_firmware/firmware/livedata.h
+    firmware/controllers/can/wideband_firmware/firmware/main.cpp
+    firmware/controllers/can/wideband_firmware/firmware/max3185x.cpp
+    firmware/controllers/can/wideband_firmware/firmware/max3185x.h
+    firmware/controllers/can/wideband_firmware/firmware/pid.cpp
+    firmware/controllers/can/wideband_firmware/firmware/pid.h
+    firmware/controllers/can/wideband_firmware/firmware/pump_control.cpp
+    firmware/controllers/can/wideband_firmware/firmware/pump_control.h
+    firmware/controllers/can/wideband_firmware/firmware/pump_dac.cpp
+    firmware/controllers/can/wideband_firmware/firmware/pump_dac.h
+    firmware/controllers/can/wideband_firmware/firmware/pwm.cpp
+    firmware/controllers/can/wideband_firmware/firmware/pwm.h
+    firmware/controllers/can/wideband_firmware/firmware/sampling.cpp
+    firmware/controllers/can/wideband_firmware/firmware/sampling.h
+    firmware/controllers/can/wideband_firmware/firmware/sampling_thread.cpp
+    firmware/controllers/can/wideband_firmware/firmware/uart.cpp
+    firmware/controllers/can/wideband_firmware/firmware/uart.h
+    firmware/controllers/can/wideband_firmware/firmware/wideband_config.h
+    firmware/controllers/can/wideband_firmware/for_rusefi/wideband_can.h
+    firmware/controllers/can/wideband_firmware/for_rusefi/wideband_image.h
+    firmware/controllers/can/wideband_firmware/test/tests/test_heater.cpp
+    firmware/controllers/can/wideband_firmware/test/tests/test_sampler.cpp
+    firmware/controllers/can/wideband_firmware/test/gmock-all.cpp
+    firmware/controllers/can/wideband_firmware/test/gtest-all.cpp
+    firmware/controllers/can/wideband_firmware/test/gtest_main.cpp
+    firmware/controllers/can/wideband_firmware/test/io_pins.h
+    firmware/controllers/can/wideband_firmware/test/test_stubs.cpp
+    firmware/controllers/can/wideband_firmware/test/wideband_board_config.h
+    firmware/controllers/can/can.h
+    firmware/controllers/can/can_bench_test.cpp
+    firmware/controllers/can/can_bench_test.h
+    firmware/controllers/can/can_bmw.h
+    firmware/controllers/can/can_dash.cpp
+    firmware/controllers/can/can_dash.h
+    firmware/controllers/can/can_dash_ms.cpp
+    firmware/controllers/can/can_dash_ms.h
+    firmware/controllers/can/can_dash_nissan.cpp
+    firmware/controllers/can/can_dash_nissan.h
+    firmware/controllers/can/can_listener.h
+    firmware/controllers/can/can_mocks.h
+    firmware/controllers/can/can_rx.cpp
+    firmware/controllers/can/can_rx.h
+    firmware/controllers/can/can_tx.cpp
+    firmware/controllers/can/can_vag.h
+    firmware/controllers/can/can_verbose.cpp
+    firmware/controllers/can/can_vss.cpp
+    firmware/controllers/can/can_vss.h
+    firmware/controllers/can/obd2.cpp
+    firmware/controllers/can/obd2.h
+    firmware/controllers/can/rusefi_wideband.cpp
+    firmware/controllers/can/rusefi_wideband.h
+    firmware/controllers/core/big_buffer.cpp
+    firmware/controllers/core/big_buffer.h
+    firmware/controllers/core/common_headers.h
+    firmware/controllers/core/engine_module.h
+    firmware/controllers/core/error_handling.cpp
+    firmware/controllers/core/error_handling.h
+    firmware/controllers/core/error_handling_c.h
+    firmware/controllers/core/error_handling_led.h
+    firmware/controllers/core/log_hard_fault.h
+    firmware/controllers/core/state_sequence.cpp
+    firmware/controllers/core/state_sequence.h
+    firmware/controllers/engine_cycle/aux_valves.cpp
+    firmware/controllers/engine_cycle/aux_valves.h
+    firmware/controllers/engine_cycle/fuel_schedule.cpp
+    firmware/controllers/engine_cycle/fuel_schedule.h
+    firmware/controllers/engine_cycle/high_pressure_fuel_pump.cpp
+    firmware/controllers/engine_cycle/high_pressure_fuel_pump.h
+    firmware/controllers/engine_cycle/knock_controller.cpp
+    firmware/controllers/engine_cycle/knock_logic.h
+    firmware/controllers/engine_cycle/main_trigger_callback.cpp
+    firmware/controllers/engine_cycle/main_trigger_callback.h
+    firmware/controllers/engine_cycle/prime_injection.cpp
+    firmware/controllers/engine_cycle/prime_injection.h
+    firmware/controllers/engine_cycle/rpm_calculator.cpp
+    firmware/controllers/engine_cycle/rpm_calculator.h
+    firmware/controllers/engine_cycle/rpm_calculator_api.h
+    firmware/controllers/engine_cycle/spark_logic.cpp
+    firmware/controllers/engine_cycle/spark_logic.h
+    firmware/controllers/gauges/malfunction_central.cpp
+    firmware/controllers/gauges/malfunction_central.h
+    firmware/controllers/gauges/malfunction_indicator.cpp
+    firmware/controllers/gauges/malfunction_indicator.h
+    firmware/controllers/gauges/speedometer.cpp
+    firmware/controllers/gauges/speedometer.h
+    firmware/controllers/lua/luaaa/example/embedded.cpp
+    firmware/controllers/lua/luaaa/example/example.cpp
+    firmware/controllers/lua/luaaa/luaaa.hpp
+    firmware/controllers/lua/can_filter.cpp
+    firmware/controllers/lua/can_filter.h
+    firmware/controllers/lua/lua.cpp
+    firmware/controllers/lua/lua.hpp
+    firmware/controllers/lua/lua_biquad.h
+    firmware/controllers/lua/lua_can_rx.cpp
+    firmware/controllers/lua/lua_hooks.cpp
+    firmware/controllers/lua/lua_hooks.h
+    firmware/controllers/lua/lua_hooks_util.cpp
+    firmware/controllers/lua/lua_hooks_util.h
+    firmware/controllers/lua/lua_lib.h
+    firmware/controllers/lua/lua_pid.h
+    firmware/controllers/lua/luaconf.h
+    firmware/controllers/lua/rusefi_lua.h
+    firmware/controllers/lua/script_impl.cpp
+    firmware/controllers/lua/script_impl.h
+    firmware/controllers/lua/value_lookup.h
+    firmware/controllers/lua/value_lookup_stubs.cpp
+    firmware/controllers/math/closed_loop_fuel.cpp
+    firmware/controllers/math/closed_loop_fuel.h
+    firmware/controllers/math/closed_loop_fuel_cell.cpp
+    firmware/controllers/math/closed_loop_fuel_cell.h
+    firmware/controllers/math/engine_math.cpp
+    firmware/controllers/math/engine_math.h
+    firmware/controllers/math/firing_order.cpp
+    firmware/controllers/math/lambda_monitor.cpp
+    firmware/controllers/math/lambda_monitor.h
+    firmware/controllers/math/speed_density.cpp
+    firmware/controllers/math/speed_density.h
+    firmware/controllers/math/throttle_model.cpp
+    firmware/controllers/math/throttle_model.h
+    firmware/controllers/sensors/converters/flex_sensor.h
+    firmware/controllers/sensors/converters/fuel_level_func.cpp
+    firmware/controllers/sensors/converters/fuel_level_func.h
+    firmware/controllers/sensors/converters/func_chain.h
+    firmware/controllers/sensors/converters/identity_func.cpp
+    firmware/controllers/sensors/converters/identity_func.h
+    firmware/controllers/sensors/converters/input_shaft_speed_converter.h
+    firmware/controllers/sensors/converters/linear_func.cpp
+    firmware/controllers/sensors/converters/linear_func.h
+    firmware/controllers/sensors/converters/resistance_func.cpp
+    firmware/controllers/sensors/converters/resistance_func.h
+    firmware/controllers/sensors/converters/sensor_converter_func.h
+    firmware/controllers/sensors/converters/table_func.h
+    firmware/controllers/sensors/converters/thermistor_func.cpp
+    firmware/controllers/sensors/converters/thermistor_func.h
+    firmware/controllers/sensors/converters/turbocharger_speed_converter.h
+    firmware/controllers/sensors/converters/vehicle_speed_converter.h
+    firmware/controllers/sensors/core/fallback_sensor.h
+    firmware/controllers/sensors/core/fuel_level_sensor.cpp
+    firmware/controllers/sensors/core/fuel_level_sensor.h
+    firmware/controllers/sensors/core/function_pointer_sensor.h
+    firmware/controllers/sensors/core/functional_sensor.cpp
+    firmware/controllers/sensors/core/functional_sensor.h
+    firmware/controllers/sensors/core/functional_sensor_base.cpp
+    firmware/controllers/sensors/core/functional_sensor_base.h
+    firmware/controllers/sensors/core/functional_sensor_impl.cpp
+    firmware/controllers/sensors/core/functional_sensor_impl.h
+    firmware/controllers/sensors/core/functional_sensor_impl.hpp
+    firmware/controllers/sensors/core/proxy_sensor.h
+    firmware/controllers/sensors/core/sensor.cpp
+    firmware/controllers/sensors/core/sensor.h
+    firmware/controllers/sensors/core/stored_value_sensor.h
+    firmware/controllers/sensors/impl/fft/fft.h
+    firmware/controllers/sensors/impl/fft/fft.hpp
+    firmware/controllers/sensors/impl/AemXSeriesEgt.cpp
+    firmware/controllers/sensors/impl/AemXSeriesEgt.h
+    firmware/controllers/sensors/impl/AemXSeriesLambda.cpp
+    firmware/controllers/sensors/impl/AemXSeriesLambda.h
+    firmware/controllers/sensors/impl/ego.cpp
+    firmware/controllers/sensors/impl/ego.h
+    firmware/controllers/sensors/impl/Lps25Sensor.cpp
+    firmware/controllers/sensors/impl/Lps25Sensor.h
+    firmware/controllers/sensors/impl/maf.cpp
+    firmware/controllers/sensors/impl/maf.h
+    firmware/controllers/sensors/impl/map.cpp
+    firmware/controllers/sensors/impl/map.h
+    firmware/controllers/sensors/impl/software_knock.cpp
+    firmware/controllers/sensors/impl/software_knock.h
+    firmware/controllers/sensors/allsensors.cpp
+    firmware/controllers/sensors/allsensors.h
+    firmware/controllers/sensors/can_sensor.h
+    firmware/controllers/sensors/frequency_sensor.cpp
+    firmware/controllers/sensors/frequency_sensor.h
+    firmware/controllers/sensors/hella_oil_level.cpp
+    firmware/controllers/sensors/hella_oil_level.h
+    firmware/controllers/sensors/redundant_ford_tps.cpp
+    firmware/controllers/sensors/redundant_ford_tps.h
+    firmware/controllers/sensors/redundant_sensor.cpp
+    firmware/controllers/sensors/redundant_sensor.h
+    firmware/controllers/sensors/sensor_checker.cpp
+    firmware/controllers/sensors/sensor_checker.h
+    firmware/controllers/sensors/sensor_info_printing.cpp
+    firmware/controllers/sensors/sensor_reader.h
+    firmware/controllers/sensors/sensor_type.h
+    firmware/controllers/sensors/thermistors.cpp
+    firmware/controllers/sensors/thermistors.h
+    firmware/controllers/sensors/tps.cpp
+    firmware/controllers/sensors/tps.h
+    firmware/controllers/sensors/vr_pwm.cpp
+    firmware/controllers/sensors/vr_pwm.h
+    firmware/controllers/system/timer/event_queue.cpp
+    firmware/controllers/system/timer/event_queue.h
+    firmware/controllers/system/timer/pwm_generator_logic.cpp
+    firmware/controllers/system/timer/pwm_generator_logic.h
+    firmware/controllers/system/timer/scheduler.cpp
+    firmware/controllers/system/timer/scheduler.h
+    firmware/controllers/system/timer/single_timer_executor.cpp
+    firmware/controllers/system/timer/single_timer_executor.h
+    firmware/controllers/system/timer/trigger_scheduler.cpp
+    firmware/controllers/system/timer/trigger_scheduler.h
+    firmware/controllers/system/buffered_writer.h
+    firmware/controllers/system/dc_motor.cpp
+    firmware/controllers/system/dc_motor.h
+    firmware/controllers/system/efi_gpio.cpp
+    firmware/controllers/system/efi_gpio.h
+    firmware/controllers/system/efi_output.cpp
+    firmware/controllers/system/efi_output.h
+    firmware/controllers/system/injection_gpio.cpp
+    firmware/controllers/system/injection_gpio.h
+    firmware/controllers/system/periodic_task.cpp
+    firmware/controllers/system/periodic_task.h
+    firmware/controllers/system/periodic_thread_controller.h
+    firmware/controllers/system/thread_controller.h
+    firmware/controllers/tcu/buttonshift.cpp
+    firmware/controllers/tcu/buttonshift.h
+    firmware/controllers/tcu/gc_auto.cpp
+    firmware/controllers/tcu/gc_auto.h
+    firmware/controllers/tcu/gc_generic.cpp
+    firmware/controllers/tcu/gc_generic.h
+    firmware/controllers/tcu/gear_controller.cpp
+    firmware/controllers/tcu/gear_controller.h
+    firmware/controllers/tcu/simple_tcu.cpp
+    firmware/controllers/tcu/simple_tcu.h
+    firmware/controllers/tcu/tc_4.cpp
+    firmware/controllers/tcu/tc_4.h
+    firmware/controllers/tcu/tc_4l6x.cpp
+    firmware/controllers/tcu/tc_4l6x.h
+    firmware/controllers/tcu/tcu.cpp
+    firmware/controllers/tcu/tcu.h
+    firmware/controllers/trigger/decoders/sync_edge.h
+    firmware/controllers/trigger/decoders/trigger_chrysler.cpp
+    firmware/controllers/trigger/decoders/trigger_chrysler.h
+    firmware/controllers/trigger/decoders/trigger_ford.cpp
+    firmware/controllers/trigger/decoders/trigger_ford.h
+    firmware/controllers/trigger/decoders/trigger_gm.cpp
+    firmware/controllers/trigger/decoders/trigger_gm.h
+    firmware/controllers/trigger/decoders/trigger_honda.cpp
+    firmware/controllers/trigger/decoders/trigger_honda.h
+    firmware/controllers/trigger/decoders/trigger_mazda.cpp
+    firmware/controllers/trigger/decoders/trigger_mazda.h
+    firmware/controllers/trigger/decoders/trigger_mercedes.cpp
+    firmware/controllers/trigger/decoders/trigger_mercedes.h
+    firmware/controllers/trigger/decoders/trigger_misc.cpp
+    firmware/controllers/trigger/decoders/trigger_misc.h
+    firmware/controllers/trigger/decoders/trigger_mitsubishi.cpp
+    firmware/controllers/trigger/decoders/trigger_mitsubishi.h
+    firmware/controllers/trigger/decoders/trigger_nissan.cpp
+    firmware/controllers/trigger/decoders/trigger_nissan.h
+    firmware/controllers/trigger/decoders/trigger_renault.cpp
+    firmware/controllers/trigger/decoders/trigger_renault.h
+    firmware/controllers/trigger/decoders/trigger_renix.cpp
+    firmware/controllers/trigger/decoders/trigger_renix.h
+    firmware/controllers/trigger/decoders/trigger_rover.cpp
+    firmware/controllers/trigger/decoders/trigger_rover.h
+    firmware/controllers/trigger/decoders/trigger_structure.cpp
+    firmware/controllers/trigger/decoders/trigger_structure.h
+    firmware/controllers/trigger/decoders/trigger_subaru.cpp
+    firmware/controllers/trigger/decoders/trigger_subaru.h
+    firmware/controllers/trigger/decoders/trigger_suzuki.cpp
+    firmware/controllers/trigger/decoders/trigger_suzuki.h
+    firmware/controllers/trigger/decoders/trigger_toyota.cpp
+    firmware/controllers/trigger/decoders/trigger_toyota.h
+    firmware/controllers/trigger/decoders/trigger_universal.cpp
+    firmware/controllers/trigger/decoders/trigger_universal.h
+    firmware/controllers/trigger/decoders/trigger_vw.cpp
+    firmware/controllers/trigger/decoders/trigger_vw.h
+    firmware/controllers/trigger/instant_rpm_calculator.cpp
+    firmware/controllers/trigger/instant_rpm_calculator.h
+    firmware/controllers/trigger/trigger_central.cpp
+    firmware/controllers/trigger/trigger_central.h
+    firmware/controllers/trigger/trigger_decoder.cpp
+    firmware/controllers/trigger/trigger_decoder.h
+    firmware/controllers/trigger/trigger_emulator_algo.cpp
+    firmware/controllers/trigger/trigger_emulator_algo.h
+    firmware/controllers/trigger/trigger_simulator.cpp
+    firmware/controllers/trigger/trigger_simulator.h
+    firmware/controllers/bench_test.cpp
+    firmware/controllers/bench_test.h
+    firmware/controllers/closed_loop_controller.h
+    firmware/controllers/date_stamp.h
+    firmware/controllers/engine_controller.cpp
+    firmware/controllers/engine_controller.h
+    firmware/controllers/engine_controller_misc.cpp
+    firmware/controllers/flash_main.cpp
+    firmware/controllers/flash_main.h
+    firmware/controllers/global_shared.h
+    firmware/controllers/hysteresis.cpp
+    firmware/controllers/hysteresis.h
+    firmware/controllers/ignition_controller.cpp
+    firmware/controllers/ignition_controller.h
+    firmware/controllers/limp_manager.cpp
+    firmware/controllers/limp_manager.h
+    firmware/controllers/long_term_fuel_trim.cpp
+    firmware/controllers/long_term_fuel_trim.h
+    firmware/controllers/max_limit_with_hysteresis.cpp
+    firmware/controllers/max_limit_with_hysteresis.h
+    firmware/controllers/mfs_storage.cpp
+    firmware/controllers/mfs_storage.h
+    firmware/controllers/persistent_store.cpp
+    firmware/controllers/settings.cpp
+    firmware/controllers/settings.h
+    firmware/controllers/shutdown_controller.cpp
+    firmware/controllers/shutdown_controller.h
+    firmware/controllers/start_stop.cpp
+    firmware/controllers/start_stop.h
+    firmware/controllers/storage.cpp
+    firmware/controllers/storage.h
+    firmware/controllers/thread_priority.h
+    firmware/development/hw_layer/poten.cpp
+    firmware/development/hw_layer/poten.h
+    firmware/development/test/test.c
+    firmware/development/test/test.h
+    firmware/development/test/testbmk.c
+    firmware/development/test/testbmk.h
+    firmware/development/engine_emulator.cpp
+    firmware/development/engine_emulator.h
+    firmware/development/engine_sniffer.cpp
+    firmware/development/engine_sniffer.h
+    firmware/development/logic_analyzer.cpp
+    firmware/development/logic_analyzer.h
+    firmware/development/perf_trace.cpp
+    firmware/development/perf_trace.h
+    firmware/development/rfi_perftest.cpp
+    firmware/development/rfi_perftest.h
+    firmware/ext_algo/utlist.h
+    firmware/hw_layer/adc/adc_external.h
+    firmware/hw_layer/adc/adc_inputs.cpp
+    firmware/hw_layer/adc/adc_inputs_onchip.cpp
+    firmware/hw_layer/adc/adc_subscription.cpp
+    firmware/hw_layer/adc/adc_subscription.h
+    firmware/hw_layer/adc/AdcDevice.h
+    firmware/hw_layer/adc/ads1015.cpp
+    firmware/hw_layer/adc/ads1015.h
+    firmware/hw_layer/adc/mcp3208.cpp
+    firmware/hw_layer/adc/mcp3208.h
+    firmware/hw_layer/algo/adc_math.h
+    firmware/hw_layer/atwinc1500/compiler.h
+    firmware/hw_layer/atwinc1500/wifi_bsp.cpp
+    firmware/hw_layer/digital_input/trigger/trigger_input.cpp
+    firmware/hw_layer/digital_input/trigger/trigger_input.h
+    firmware/hw_layer/digital_input/trigger/trigger_input_adc.cpp
+    firmware/hw_layer/digital_input/trigger/trigger_input_adc.h
+    firmware/hw_layer/digital_input/trigger/trigger_input_comp.cpp
+    firmware/hw_layer/digital_input/trigger/trigger_input_exti.cpp
+    firmware/hw_layer/digital_input/digital_input_exti.cpp
+    firmware/hw_layer/digital_input/digital_input_exti.h
+    firmware/hw_layer/drivers/can/can_category.h
+    firmware/hw_layer/drivers/can/can_hw.cpp
+    firmware/hw_layer/drivers/can/can_hw.h
+    firmware/hw_layer/drivers/can/can_msg_tx.cpp
+    firmware/hw_layer/drivers/can/can_msg_tx.h
+    firmware/hw_layer/drivers/flash/sst26f/hal_flash_device.c
+    firmware/hw_layer/drivers/flash/sst26f/hal_flash_device.h
+    firmware/hw_layer/drivers/flash/w25q/hal_flash_device.c
+    firmware/hw_layer/drivers/flash/w25q/hal_flash_device.h
+    firmware/hw_layer/drivers/gpio/can_gpio_msiobox.cpp
+    firmware/hw_layer/drivers/gpio/can_gpio_msiobox.h
+    firmware/hw_layer/drivers/gpio/core.cpp
+    firmware/hw_layer/drivers/gpio/drv8860.cpp
+    firmware/hw_layer/drivers/gpio/drv8860.h
+    firmware/hw_layer/drivers/gpio/gpio_ext.h
+    firmware/hw_layer/drivers/gpio/l9779.cpp
+    firmware/hw_layer/drivers/gpio/l9779.h
+    firmware/hw_layer/drivers/gpio/mc33810.cpp
+    firmware/hw_layer/drivers/gpio/mc33810.h
+    firmware/hw_layer/drivers/gpio/mc33972.cpp
+    firmware/hw_layer/drivers/gpio/mc33972.h
+    firmware/hw_layer/drivers/gpio/protected_gpio.cpp
+    firmware/hw_layer/drivers/gpio/protected_gpio.h
+    firmware/hw_layer/drivers/gpio/tle6240.cpp
+    firmware/hw_layer/drivers/gpio/tle6240.h
+    firmware/hw_layer/drivers/gpio/tle8888.cpp
+    firmware/hw_layer/drivers/gpio/tle8888.h
+    firmware/hw_layer/drivers/gpio/tle9104.cpp
+    firmware/hw_layer/drivers/gpio/tle9104.h
+    firmware/hw_layer/drivers/gpio/tle9201.cpp
+    firmware/hw_layer/drivers/gpio/tle9201.h
+    firmware/hw_layer/drivers/i2c/i2c_bb.cpp
+    firmware/hw_layer/drivers/i2c/i2c_bb.h
+    firmware/hw_layer/drivers/led/WS2812.cpp
+    firmware/hw_layer/drivers/led/WS2812.h
+    firmware/hw_layer/drivers/led/ws2812_conf.h
+    firmware/hw_layer/drivers/sent/sent.cpp
+    firmware/hw_layer/drivers/sent/sent.h
+    firmware/hw_layer/drivers/sent/sent_hw_icu.cpp
+    firmware/hw_layer/drivers/sent/sent_hw_icu.h
+    firmware/hw_layer/drivers/dac.cpp
+    firmware/hw_layer/drivers/dac.h
+    firmware/hw_layer/mass_storage/compressed_block_device.cpp
+    firmware/hw_layer/mass_storage/compressed_block_device.h
+    firmware/hw_layer/mass_storage/mass_storage_device.cpp
+    firmware/hw_layer/mass_storage/mass_storage_device.h
+    firmware/hw_layer/mass_storage/mass_storage_init.cpp
+    firmware/hw_layer/mass_storage/mass_storage_init.h
+    firmware/hw_layer/mass_storage/null_device.cpp
+    firmware/hw_layer/mass_storage/null_device.h
+    firmware/hw_layer/mass_storage/ramdisk_image.h
+    firmware/hw_layer/mass_storage/ramdisk_image_compressed.h
+    firmware/hw_layer/microsecond_timer/microsecond_timer.cpp
+    firmware/hw_layer/microsecond_timer/microsecond_timer.h
+    firmware/hw_layer/microsecond_timer/microsecond_timer_gpt.cpp
+    firmware/hw_layer/microsecond_timer/port_microsecond_timer.h
+    firmware/hw_layer/ports/stm32/cfg/chconf_stm32.h
+    firmware/hw_layer/ports/stm32/cfg/halconf_community.h
+    firmware/hw_layer/ports/stm32/serial_over_usb/usbcfg.cpp
+    firmware/hw_layer/ports/stm32/serial_over_usb/usbcfg.h
+    firmware/hw_layer/ports/stm32/serial_over_usb/usbconsole.cpp
+    firmware/hw_layer/ports/stm32/serial_over_usb/usbconsole.h
+    firmware/hw_layer/ports/stm32/stm32f4/cfg/chconf.h
+    firmware/hw_layer/ports/stm32/stm32f4/cfg/halconf.h
+    firmware/hw_layer/ports/stm32/stm32f4/cfg/mcuconf.h
+    firmware/hw_layer/ports/stm32/stm32f4/openblt/lib/stm32f4xx_hal_conf.h
+    firmware/hw_layer/ports/stm32/stm32f4/openblt/lib/system_stm32f4xx.c
+    firmware/hw_layer/ports/stm32/stm32f4/board.h
+    firmware/hw_layer/ports/stm32/stm32f4/device_mpu_util.h
+    firmware/hw_layer/ports/stm32/stm32f4/dfu_init.h
+    firmware/hw_layer/ports/stm32/stm32f4/global_port.h
+    firmware/hw_layer/ports/stm32/stm32f4/mpu_util.cpp
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_def.h
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_flash.c
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_flash.h
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_flash_ex.c
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_flash_ex.h
+    firmware/hw_layer/ports/stm32/stm32f4/stm32f4xx_hal_flash_ramfunc.h
+    firmware/hw_layer/ports/stm32/stm32f7/cfg/chconf.h
+    firmware/hw_layer/ports/stm32/stm32f7/cfg/halconf.h
+    firmware/hw_layer/ports/stm32/stm32f7/cfg/mcuconf.h
+    firmware/hw_layer/ports/stm32/stm32f7/openblt/lib/stm32f7xx_hal_conf.h
+    firmware/hw_layer/ports/stm32/stm32f7/openblt/lib/system_stm32f7xx.c
+    firmware/hw_layer/ports/stm32/stm32f7/board.h
+    firmware/hw_layer/ports/stm32/stm32f7/device_mpu_util.h
+    firmware/hw_layer/ports/stm32/stm32f7/dfu_init.h
+    firmware/hw_layer/ports/stm32/stm32f7/global_port.h
+    firmware/hw_layer/ports/stm32/stm32f7/mpu_util.cpp
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_hal_def.h
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_hal_flash.c
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_hal_flash.h
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_hal_flash_ex.c
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_hal_flash_ex.h
+    firmware/hw_layer/ports/stm32/stm32f7/stm32f7xx_rtc.cpp
+    firmware/hw_layer/ports/stm32/stm32h7/cfg/chconf.h
+    firmware/hw_layer/ports/stm32/stm32h7/cfg/halconf.h
+    firmware/hw_layer/ports/stm32/stm32h7/cfg/mcuconf.h
+    firmware/hw_layer/ports/stm32/stm32h7/board.h
+    firmware/hw_layer/ports/stm32/stm32h7/device_mpu_util.h
+    firmware/hw_layer/ports/stm32/stm32h7/dfu_init.h
+    firmware/hw_layer/ports/stm32/stm32h7/global_port.h
+    firmware/hw_layer/ports/stm32/stm32h7/mpu_util.cpp
+    firmware/hw_layer/ports/stm32/stm32h7/stm32h7xx_hal_def.h
+    firmware/hw_layer/ports/stm32/stm32h7/stm32h7xx_hal_flash.c
+    firmware/hw_layer/ports/stm32/stm32h7/stm32h7xx_hal_flash.h
+    firmware/hw_layer/ports/stm32/stm32h7/stm32h7xx_hal_flash_ex.c
+    firmware/hw_layer/ports/stm32/stm32h7/stm32h7xx_hal_flash_ex.h
+    firmware/hw_layer/ports/stm32/backup_ram.cpp
+    firmware/hw_layer/ports/stm32/flash_int.cpp
+    firmware/hw_layer/ports/stm32/mcuconf_common_f4_f7.h
+    firmware/hw_layer/ports/stm32/microsecond_timer_stm32.cpp
+    firmware/hw_layer/ports/stm32/osc_detector.cpp
+    firmware/hw_layer/ports/stm32/port_mpu_util.h
+    firmware/hw_layer/ports/stm32/stm32_adc.cpp
+    firmware/hw_layer/ports/stm32/stm32_adc_v2.cpp
+    firmware/hw_layer/ports/stm32/stm32_adc_v4.cpp
+    firmware/hw_layer/ports/stm32/stm32_can.cpp
+    firmware/hw_layer/ports/stm32/stm32_common.cpp
+    firmware/hw_layer/ports/stm32/stm32_icu.cpp
+    firmware/hw_layer/ports/stm32/stm32_pins.cpp
+    firmware/hw_layer/ports/stm32/stm32_pwm.cpp
+    firmware/hw_layer/ports/stm32/stm32_reset_cause.cpp
+    firmware/hw_layer/ports/stm32/stm32_serial.cpp
+    firmware/hw_layer/ports/stm32/stm32_spi.cpp
+    firmware/hw_layer/ports/arm_common.cpp
+    firmware/hw_layer/ports/chconf_common.h
+    firmware/hw_layer/ports/mpu_util.h
+    firmware/hw_layer/ports/mpu_watchdog.h
+    firmware/hw_layer/ports/rusefi_halconf.h
+    firmware/hw_layer/sensors/accelerometer.cpp
+    firmware/hw_layer/sensors/accelerometer.h
+    firmware/hw_layer/sensors/gps_uart.cpp
+    firmware/hw_layer/sensors/gps_uart.h
+    firmware/hw_layer/sensors/lps25.cpp
+    firmware/hw_layer/sensors/lps25.h
+    firmware/hw_layer/sensors/max3185x.cpp
+    firmware/hw_layer/sensors/max3185x.h
+    firmware/hw_layer/sensors/yaw_rate_sensor.cpp
+    firmware/hw_layer/sensors/yaw_rate_sensor.h
+    firmware/hw_layer/backup_ram.h
+    firmware/hw_layer/cdm_ion_sense.cpp
+    firmware/hw_layer/cdm_ion_sense.h
+    firmware/hw_layer/debounce.cpp
+    firmware/hw_layer/debounce.h
+    firmware/hw_layer/flash_int.h
+    firmware/hw_layer/hardware.cpp
+    firmware/hw_layer/hardware.h
+    firmware/hw_layer/io_pins.cpp
+    firmware/hw_layer/io_pins.h
+    firmware/hw_layer/kline.cpp
+    firmware/hw_layer/kline.h
+    firmware/hw_layer/main_hardfault.c
+    firmware/hw_layer/mc33816.cpp
+    firmware/hw_layer/mc33816.h
+    firmware/hw_layer/mmc_card.cpp
+    firmware/hw_layer/mmc_card.h
+    firmware/hw_layer/mmc_card_util.cpp
+    firmware/hw_layer/mmc_card_util.h
+    firmware/hw_layer/pin_repository.cpp
+    firmware/hw_layer/pin_repository.h
+    firmware/hw_layer/plain_pin_repository.h
+    firmware/hw_layer/rtc_helper.cpp
+    firmware/hw_layer/rtc_helper.h
+    firmware/hw_layer/smart_gpio.cpp
+    firmware/hw_layer/smart_gpio.h
+    firmware/hw_layer/stepper.cpp
+    firmware/hw_layer/stepper.h
+    firmware/hw_layer/stepper_dual_hbridge.cpp
+    firmware/init/sensor/init_aux.cpp
+    firmware/init/sensor/init_aux_speed_sensor.cpp
+    firmware/init/sensor/init_baro.cpp
+    firmware/init/sensor/init_can_sensors.cpp
+    firmware/init/sensor/init_egt.cpp
+    firmware/init/sensor/init_flex.cpp
+    firmware/init/sensor/init_fluid_pressure.cpp
+    firmware/init/sensor/init_fuel_level.cpp
+    firmware/init/sensor/init_input_shaft_speed_sensor.cpp
+    firmware/init/sensor/init_lambda.cpp
+    firmware/init/sensor/init_maf.cpp
+    firmware/init/sensor/init_map.cpp
+    firmware/init/sensor/init_range.cpp
+    firmware/init/sensor/init_sensors.cpp
+    firmware/init/sensor/init_thermistors.cpp
+    firmware/init/sensor/init_tps.cpp
+    firmware/init/sensor/init_turbocharger_speed_sensor.cpp
+    firmware/init/sensor/init_vbatt.cpp
+    firmware/init/sensor/init_vehicle_speed_sensor.cpp
+    firmware/init/init.h
+    firmware/libfirmware/board_id/boards_dictionary.h
+    firmware/libfirmware/board_id/boards_id.h
+    firmware/libfirmware/board_id/qc_stim_meta.h
+    firmware/libfirmware/can/can_common.h
+    firmware/libfirmware/mock/global.h
+    firmware/libfirmware/mock/lib-time-mocks.cpp
+    firmware/libfirmware/pt2001/include/rusefi/pt2001.h
+    firmware/libfirmware/pt2001/include/rusefi/pt2001_memory_map.h
+    firmware/libfirmware/pt2001/project/rusefi/sample_code/PT2001_dram.h
+    firmware/libfirmware/pt2001/project/rusefi/sample_code/PT2001_LoadData.c
+    firmware/libfirmware/pt2001/project/rusefi/sample_code/PT2001_LoadData.h
+    firmware/libfirmware/pt2001/src/pt2001.cpp
+    firmware/libfirmware/sent/include/sent_decoder.h
+    firmware/libfirmware/sent/include/sent_gm_fuel_sensor.h
+    firmware/libfirmware/sent/src/sent_decoder.cpp
+    firmware/libfirmware/stm32-util/mcu-util.h
+    firmware/libfirmware/util/include/rusefi/containers/cyclic_buffer.h
+    firmware/libfirmware/util/include/rusefi/containers/fifo_buffer.h
+    firmware/libfirmware/util/include/rusefi/arrays.h
+    firmware/libfirmware/util/include/rusefi/crc.h
+    firmware/libfirmware/util/include/rusefi/critical_error.h
+    firmware/libfirmware/util/include/rusefi/efistringutil.h
+    firmware/libfirmware/util/include/rusefi/endian.h
+    firmware/libfirmware/util/include/rusefi/expected.h
+    firmware/libfirmware/util/include/rusefi/fragments.h
+    firmware/libfirmware/util/include/rusefi/interpolation.h
+    firmware/libfirmware/util/include/rusefi/manifest.h
+    firmware/libfirmware/util/include/rusefi/math.h
+    firmware/libfirmware/util/include/rusefi/rusefi_time_math.h
+    firmware/libfirmware/util/include/rusefi/rusefi_time_types.h
+    firmware/libfirmware/util/include/rusefi/rusefi_time_wraparound.h
+    firmware/libfirmware/util/include/rusefi/scaled_channel.h
+    firmware/libfirmware/util/include/rusefi/timer.h
+    firmware/libfirmware/util/include/rusefi/true_false.h
+    firmware/libfirmware/util/src/crc.cpp
+    firmware/libfirmware/util/src/efistringutil.cpp
+    firmware/libfirmware/util/src/fragments.cpp
+    firmware/libfirmware/util/src/math.cpp
+    firmware/libfirmware/util/src/timer.cpp
+    firmware/libfirmware/util/src/util_dummy.cpp
+    firmware/libfirmware/util/test/test_arrays.cpp
+    firmware/libfirmware/util/test/test_crc.cpp
+    firmware/libfirmware/util/test/test_cyclic_buffer.cpp
+    firmware/libfirmware/util/test/test_efistringutil.cpp
+    firmware/libfirmware/util/test/test_fragments.cpp
+    firmware/libfirmware/util/test/test_interpolation.cpp
+    firmware/libfirmware/util/test/test_manifest.cpp
+    firmware/libfirmware/util/test/test_math.cpp
+    firmware/libfirmware/util/test/test_scaled.cpp
+    firmware/libfirmware/util/test/test_wraparound.cpp
+    firmware/libfirmware/gmock-all.cpp
+    firmware/libfirmware/gtest-all.cpp
+    firmware/libfirmware/gtest_main.cpp
+    firmware/pch/pch.h
+    firmware/util/containers/fl_stack.h
+    firmware/util/containers/listener_array.cpp
+    firmware/util/containers/listener_array.h
+    firmware/util/containers/local_version_holder.cpp
+    firmware/util/containers/local_version_holder.h
+    firmware/util/containers/Map2D.h
+    firmware/util/containers/static_vector.h
+    firmware/util/containers/table_helper.h
+    firmware/util/containers/type_list.h
+    firmware/util/math/biquad.cpp
+    firmware/util/math/biquad.h
+    firmware/util/math/crc8hondak.cpp
+    firmware/util/math/crc8hondak.h
+    firmware/util/math/deadband.h
+    firmware/util/math/efi_interpolation.h
+    firmware/util/math/efi_pid.cpp
+    firmware/util/math/efi_pid.h
+    firmware/util/math/efi_ratio.h
+    firmware/util/math/error_accumulator.cpp
+    firmware/util/math/error_accumulator.h
+    firmware/util/math/exp_average.h
+    firmware/util/math/interpolation.cpp
+    firmware/util/cli_registry.cpp
+    firmware/util/cli_registry.h
+    firmware/util/datalogging.cpp
+    firmware/util/datalogging.h
+    firmware/util/efi_quote.h
+    firmware/util/efi_scaled_channel.h
+    firmware/util/efilib.cpp
+    firmware/util/efilib.h
+    firmware/util/efiprintf.h
+    firmware/util/efitime.cpp
+    firmware/util/efitime.h
+    firmware/util/histogram.cpp
+    firmware/util/histogram.h
+    firmware/util/loggingcentral.cpp
+    firmware/util/loggingcentral.h
+    firmware/util/os_util.cpp
+    firmware/util/os_util.h
+    firmware/util/peak_detect.h
+    firmware/util/tinymt32.c
+    firmware/util/tinymt32.h
+    firmware/util/unused.h
+    firmware/configuration_check.cpp
+    firmware/gcc_version_check.c
+    firmware/global.h
+    firmware/kill_for_coverity.c
+    firmware/main.cpp
+    firmware/rusefi.cpp
+    firmware/rusefi.h
+    java_console/ui/src/main/resources/c_sources/ac_control.cpp
+    java_console/ui/src/main/resources/c_sources/boost_control.cpp
+    misc/hex2dfu/hex2dfu.c
+    misc/tooth_log_converter/log_convert.cpp
+    misc/weird_stuff/hip9011_test_code/hip9011.c
+        firmware/integration/rusefi_config_trigger.txt
+        firmware/integration/rusefi_config.txt
+        firmware/integration/rusefi_config_shared.txt
+        firmware/integration/ts_protocol.txt
+        firmware/live_data_generated/engine_state_generated.h
+        unit_tests/mocks.h
+        firmware/config/boards/hellen/hellen_leds_100.cpp
+        firmware/controllers/modules/tachometer/tachometer.h
+        firmware/controllers/modules/tachometer/tachometer.cpp
+        firmware/config/boards/hellen/hellen_common.cpp
+        firmware/config/boards/hellen/hellen_board_id_resistors.h
+        firmware/config/boards/hellen/hellen_knock_config.h
+        firmware/config/boards/hellen/hellen_leds_64.cpp
+        firmware/config/boards/hellen/hellen_leds_176.cpp
+        firmware/config/boards/hellen/hellen_leds_144.cpp
+        firmware/rusefi.cpp
+        firmware/config/boards/hellen_all_meta.h
+        firmware/controllers/modules/maf_averaging/maf_averaging.h
+        firmware/controllers/modules/maf_averaging/maf_averaging.cpp
+        firmware/controllers/modules/map_averaging/map_averaging.cpp
+        firmware/controllers/modules/map_averaging/map_averaging.h
+        firmware/controllers/modules/gear_detector/gear_detector.cpp
+        firmware/controllers/modules/gear_detector/gear_detector.h
+        ${MyCSources}
+        ${MyCSources2}
+)
